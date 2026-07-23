@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import modelo.entity.Cita;
 import modelo.entity.Cliente;
+import modelo.entity.Estado;
 import modelo.entity.Mascota;
 import modelo.entity.Servicio;
 import modelo.entity.Veterinario;
@@ -255,6 +256,11 @@ public class GestionarCitaControlador extends HttpServlet {
 
     private void reagendar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String citaId = request.getParameter("citaId");
+        Cita cita = citaService.obtenerCita(Long.parseLong(citaId));
+        if (!puedeModificarCita(request, cita)) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Una cita completada o cancelada no se puede reagendar");
+            return;
+        }
         LocalDate semanaActual = LocalDate.now().with(DayOfWeek.MONDAY);
         mostrarCalendario(request, response, citaId, semanaActual);
     }
@@ -296,6 +302,10 @@ public class GestionarCitaControlador extends HttpServlet {
         Long citaId = Long.parseLong(request.getParameter("citaId"));
         String nuevoHorario = request.getParameter("nuevoHorario");
         Cita citaSeleccionada = citaService.obtenerCita(citaId);
+        if (!puedeModificarCita(request, citaSeleccionada)) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Una cita completada o cancelada no se puede reagendar");
+            return;
+        }
         LocalDateTime horario = LocalDateTime.parse(nuevoHorario);
         citaSeleccionada.setFecha(horario.toLocalDate());
         citaSeleccionada.setHora(horario.toLocalTime());
@@ -308,6 +318,10 @@ public class GestionarCitaControlador extends HttpServlet {
     private void solicitarCancelacion(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String citaId = request.getParameter("citaId");
         Cita citaSeleccionada = citaService.obtenerCita(Long.parseLong(citaId));
+        if (!puedeModificarCita(request, citaSeleccionada)) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Una cita completada o cancelada no se puede cancelar");
+            return;
+        }
         request.setAttribute("citaId", citaId);
         request.setAttribute("accionConfirmar", "confirmarCancelacion");
         request.setAttribute("accionCancelar", "cancelarSolicitudCancelacion");
@@ -323,7 +337,20 @@ public class GestionarCitaControlador extends HttpServlet {
     private void confirmarCancelacion(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String citaId = request.getParameter("citaId");
         Cita citaSeleccionada = citaService.obtenerCita(Long.parseLong(citaId));
+        if (!puedeModificarCita(request, citaSeleccionada)) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Una cita completada o cancelada no se puede cancelar");
+            return;
+        }
         citaService.cancelarCita(citaSeleccionada);
         mostrarMensajeInformativo(request, response, "Cita cancelada con éxito");
+    }
+
+    private boolean puedeModificarCita(HttpServletRequest request, Cita cita) {
+        Object usuario = request.getSession().getAttribute("usuario");
+        return usuario instanceof Cliente
+                && cita != null
+                && cita.getCliente().getCedula().equals(((Cliente) usuario).getCedula())
+                && cita.getEstado() != Estado.COMPLETADA
+                && cita.getEstado() != Estado.CANCELADA;
     }
 }

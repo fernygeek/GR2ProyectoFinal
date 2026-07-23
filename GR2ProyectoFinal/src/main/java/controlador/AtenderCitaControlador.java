@@ -14,6 +14,9 @@ import modelo.entity.Atencion;
 import modelo.entity.Cita;
 import modelo.entity.HistoriaClinica;
 import modelo.entity.Mascota;
+import modelo.entity.Estado;
+import modelo.entity.Usuario;
+import modelo.entity.Veterinario;
 import modelo.services.AtencionService;
 import modelo.services.CitaService;
 import modelo.services.HistoriaClinicaService;
@@ -29,12 +32,10 @@ public class AtenderCitaControlador extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String accion = request.getParameter("accion");
-        if ("marcarAsistenciaDeCita".equals(accion)) {
-            marcarAsistenciaDeCita(request, response);
-        } else if ("atenderLaCita".equals(accion)) {
+        if ("atenderLaCita".equals(accion)) {
             atenderLaCita(request, response);
         } else {
-            consultarCita(request, response);
+            listarCitasAsistidas(request, response);
         }
     }
 
@@ -58,30 +59,36 @@ public class AtenderCitaControlador extends HttpServlet {
         } else if ("registrarPago".equals(accion)) {
             registrarPago(request, response);
         } else {
-            consultarCita(request, response);
+            listarCitasAsistidas(request, response);
         }
     }
 
     // ===== 1. Robustez CU02 Atender Citas =====
 
-    private void consultarCita(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.sendRedirect(request.getContextPath() + "/consultarCita");
-    }
-
-    private void marcarAsistenciaDeCita(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Long citaId = Long.parseLong(request.getParameter("citaId"));
-        Cita citaSeleccionada = citaService.obtenerCita(citaId);
-        cambiarCitaAAsistida(citaSeleccionada);
-        response.sendRedirect(request.getContextPath() + "/consultarCita");
-    }
-
-    private void cambiarCitaAAsistida(Cita citaSeleccionada) {
-        citaService.cambiarCitaAAsistida(citaSeleccionada);
+    private void listarCitasAsistidas(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Veterinario veterinario = obtenerVeterinarioAutenticado(request);
+        if (veterinario == null) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Esta opción es exclusiva del veterinario");
+            return;
+        }
+        request.setAttribute("listaCitasAsistidas", citaService.obtenerCitasAsistidas(veterinario));
+        request.getRequestDispatcher("/vistas/ListaCitasAsistidas.jsp").forward(request, response);
     }
 
     private void atenderLaCita(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Long citaId = Long.parseLong(request.getParameter("citaId"));
         Cita citaSeleccionada = citaService.obtenerCita(citaId);
+        Veterinario veterinario = obtenerVeterinarioAutenticado(request);
+        if (citaSeleccionada != null && citaSeleccionada.isAtendida()) {
+            response.sendRedirect(request.getContextPath() + "/consultarCita");
+            return;
+        }
+        if (veterinario == null || citaSeleccionada == null
+                || citaSeleccionada.getEstado() != Estado.ASISTIDA
+                || !veterinario.getCedula().equals(citaSeleccionada.getVeterinario().getCedula())) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Solo puede atender sus citas marcadas como asistidas");
+            return;
+        }
         Mascota mascota = citaService.obtenerMascotaCita(citaSeleccionada);
         HttpSession session = request.getSession();
         session.setAttribute("atenderCita", citaSeleccionada);
@@ -89,12 +96,17 @@ public class AtenderCitaControlador extends HttpServlet {
         HistoriaClinica historiaClinica = historiaClinicaService.obtenerHistoriaClinica(mascota);
         if (historiaClinica != null) {
             session.setAttribute("atenderHistoriaClinica", historiaClinica);
-            request.setAttribute("accionConfirmar", "abrirHistoriaClinica");
-            mostrarMensajeConfirmacion(request, response, "¿Desea abrir la historia clínica de " + mascota.getNombre() + "?");
+            List<Atencion> listaAtenciones = atencionService.obtenerAtenciones(historiaClinica);
+            mostrarHistoriaClinica(request, response, listaAtenciones);
         } else {
             request.setAttribute("accionConfirmar", "crearHistoriaClinica");
             mostrarMensajeConfirmacion(request, response, "¿Desea crear la historia clínica de " + mascota.getNombre() + "?");
         }
+    }
+
+    private Veterinario obtenerVeterinarioAutenticado(HttpServletRequest request) {
+        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
+        return usuario instanceof Veterinario ? (Veterinario) usuario : null;
     }
 
     private void mostrarMensajeConfirmacion(HttpServletRequest request, HttpServletResponse response, String mensaje) throws ServletException, IOException {
@@ -120,6 +132,7 @@ public class AtenderCitaControlador extends HttpServlet {
         HistoriaClinica historiaClinica = historiaClinicaService.crearHistoriaClinica(mascota);
         registrarAtencion(LocalDate.parse(fecha), Double.parseDouble(pesoMascota), Integer.parseInt(edadMascota), sintomas,
                 exploracion, diagnostico, receta, tratamiento, historiaClinica);
+        marcarCitaComoAtendida(request);
         mostrarMensajeInformativo(request, response, "Historia clínica creada con éxito");
     }
 
@@ -130,7 +143,8 @@ public class AtenderCitaControlador extends HttpServlet {
 
     private void mostrarMensajeInformativo(HttpServletRequest request, HttpServletResponse response, String mensaje) throws ServletException, IOException {
         request.setAttribute("mensaje", mensaje);
-        request.setAttribute("enlaceRegistrarPago", request.getContextPath() + "/atenderCitas?accion=registrarPago");
+        request.setAttribute("enlaceContinuar", request.getContextPath() + "/consultarCita");
+        request.setAttribute("textoEnlaceContinuar", "Volver a consultar citas");
         request.getRequestDispatcher("/vistas/MensajeInformativo.jsp").forward(request, response);
     }
 
@@ -165,11 +179,17 @@ public class AtenderCitaControlador extends HttpServlet {
         HistoriaClinica historiaClinica = (HistoriaClinica) request.getSession().getAttribute("atenderHistoriaClinica");
         guardarNuevaAtencion(LocalDate.parse(fecha), Integer.parseInt(edadMascota), Double.parseDouble(pesoMascota), sintomas,
                 exploracion, diagnostico, receta, tratamiento, historiaClinica);
+        marcarCitaComoAtendida(request);
         mostrarMensajeInformativo(request, response, "Atención guardada con éxito");
     }
 
     private void guardarNuevaAtencion(LocalDate fecha, Integer edadMascota, Double pesoMascota, String sintomas,
             String exploracion, String diagnostico, String receta, String tratamiento, HistoriaClinica historiaClinica) {
         atencionService.guardarNuevaAtencion(fecha, edadMascota, pesoMascota, sintomas, exploracion, diagnostico, receta, tratamiento, historiaClinica);
+    }
+
+    private void marcarCitaComoAtendida(HttpServletRequest request) {
+        Cita cita = (Cita) request.getSession().getAttribute("atenderCita");
+        citaService.marcarCitaComoAtendida(cita);
     }
 }

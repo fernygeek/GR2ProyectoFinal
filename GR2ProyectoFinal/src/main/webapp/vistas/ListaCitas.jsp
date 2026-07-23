@@ -86,8 +86,13 @@
                             <td>${c.veterinario.nombre}</td>
                             <td>${c.estado}</td>
                             <td class="citas-actions">
-                                <a class="btn-small reagendar" href="${pageContext.request.contextPath}/citas?accion=reagendar&citaId=${c.id}">Reagendar</a>
-                                <a class="btn-small cancelar" href="${pageContext.request.contextPath}/citas?accion=solicitarCancelacion&citaId=${c.id}">Cancelar</a>
+                                <c:if test="${c.estado != 'COMPLETADA' && c.estado != 'CANCELADA'}">
+                                    <a class="btn-small reagendar" href="${pageContext.request.contextPath}/citas?accion=reagendar&amp;citaId=${c.id}">Reagendar</a>
+                                    <a class="btn-small cancelar" href="${pageContext.request.contextPath}/citas?accion=solicitarCancelacion&amp;citaId=${c.id}">Cancelar</a>
+                                </c:if>
+                                <c:if test="${c.estado == 'COMPLETADA' || c.estado == 'CANCELADA'}">
+                                    <span style="color: var(--color-text-muted);">—</span>
+                                </c:if>
                             </td>
                         </tr>
                     </c:forEach>

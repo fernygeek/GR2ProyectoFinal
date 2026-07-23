@@ -14,17 +14,17 @@
             org.eclipse.persistence.jpa.PersistenceProvider
         </provider>
 
-        <class>modelo.entities.Usuario</class>
-        <class>modelo.entities.Cliente</class>
-        <class>modelo.entities.Veterinario</class>
-        <class>modelo.entities.Recepcionista</class>
-        <class>modelo.entities.Administrador</class>
-        <class>modelo.entities.Mascota</class>
-        <class>modelo.entities.Servicio</class>
-        <class>modelo.entities.Cita</class>
-        <class>modelo.entities.HistoriaClinica</class>
-        <class>modelo.entities.Atencion</class>
-        <class>modelo.entities.Pago</class>
+        <class>modelo.entity.Usuario</class>
+        <class>modelo.entity.Cliente</class>
+        <class>modelo.entity.Veterinario</class>
+        <class>modelo.entity.Recepcionista</class>
+        <class>modelo.entity.Administrador</class>
+        <class>modelo.entity.Mascota</class>
+        <class>modelo.entity.Servicio</class>
+        <class>modelo.entity.Cita</class>
+        <class>modelo.entity.HistoriaClinica</class>
+        <class>modelo.entity.Atencion</class>
+        <class>modelo.entity.Pago</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.url"
@@ -40,7 +40,7 @@
                       value="com.mysql.cj.jdbc.Driver"/>
 
             <property name="eclipselink.ddl-generation"
-                      value="create-tables"/>
+                      value="create-or-extend-tables"/>
         </properties>
 
     </persistence-unit>

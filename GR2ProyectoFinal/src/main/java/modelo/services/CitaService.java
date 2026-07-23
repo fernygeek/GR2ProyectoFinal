@@ -32,6 +32,14 @@ public class CitaService {
         return citaDAO.obtenerCitas(cedula);
     }
 
+    public List<Cita> consultarCitasAgendadas(String cedula, Veterinario veterinario) {
+        return citaDAO.obtenerCitas(cedula, veterinario);
+    }
+
+    public List<Cita> obtenerCitasAsistidas(Veterinario veterinario) {
+        return citaDAO.obtenerCitasAsistidas(veterinario);
+    }
+
     public void guardarCita(Mascota mascota, Servicio servicio, Veterinario veterinario, LocalDateTime horarioSeleccionado, Cliente cliente) {
         Cita cita = new Cita(horarioSeleccionado.toLocalDate(), horarioSeleccionado.toLocalTime(), cliente, mascota, servicio, veterinario, Estado.PENDIENTE);
         citaDAO.guardarCita(cita);
@@ -56,7 +64,13 @@ public class CitaService {
 
     public void cambiarCitaAAsistida(Cita citaSeleccionada) {
         citaSeleccionada.setEstado(Estado.ASISTIDA);
+        citaSeleccionada.setAtendida(false);
         citaDAO.actualizarCita(citaSeleccionada);
+    }
+
+    public void marcarCitaComoAtendida(Cita cita) {
+        cita.setAtendida(true);
+        citaDAO.actualizarCita(cita);
     }
 
     public Mascota obtenerMascotaCita(Cita citaSeleccionada) {

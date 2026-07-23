@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpSessionEvent;
 import jakarta.servlet.http.HttpSessionListener;
 import modelo.entity.Administrador;
 import modelo.entity.Cliente;
+import modelo.entity.Recepcionista;
 import modelo.entity.Servicio;
 import modelo.entity.Usuario;
 import modelo.entity.Veterinario;
@@ -36,11 +37,19 @@ public class Sesion implements HttpSessionListener, ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         List<Usuario> usuariosExistentes = usuarioService.obtenerUsuarios();
         if (!usuariosExistentes.isEmpty()) {
+            if (usuarioService.obtenerUsuario("3000000001") == null) {
+                usuarioService.guardarUsuario(new Recepcionista(
+                        "3000000001", "Daniela López", "daniela.lopez@petcare.com", "recep123"));
+            }
             return;
         }
 
         Administrador admin = new Administrador("0000000001", "Admin Principal", "admin@correo.com", "admin123");
         usuarioService.guardarUsuario(admin);
+
+        Recepcionista recepcionista = new Recepcionista(
+                "3000000001", "Daniela López", "daniela.lopez@petcare.com", "recep123");
+        usuarioService.guardarUsuario(recepcionista);
 
         Veterinario vet1 = new Veterinario("1000000001", "Dr. Carlos Mendoza", "carlos.mendoza@petcare.com", "vet123");
         Veterinario vet2 = new Veterinario("1000000002", "Dra. Ana Torres", "ana.torres@petcare.com", "vet123");

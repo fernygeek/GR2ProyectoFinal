@@ -51,7 +51,7 @@
 
                 <label for="monto" class="field-label">Monto</label>
                 <div class="field-with-icon">
-                    <input type="number" step="0.01" id="monto" name="monto" placeholder="25.00" required>
+                    <input type="number" step="0.01" min="0.01" id="monto" name="monto" placeholder="25.00" required>
                 </div>
 
                 <button type="submit" class="btn-gradient">Guardar</button>

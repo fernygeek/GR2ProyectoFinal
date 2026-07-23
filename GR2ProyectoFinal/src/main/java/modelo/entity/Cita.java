@@ -36,6 +36,8 @@ public class Cita {
     @Enumerated(EnumType.STRING)
     private Estado estado;
 
+    private Boolean atendida = false;
+
     public Cita() {
     }
 
@@ -47,6 +49,7 @@ public class Cita {
         this.servicio = servicio;
         this.veterinario = veterinario;
         this.estado = estado;
+        this.atendida = false;
     }
 
     public Long getId() {
@@ -111,5 +114,13 @@ public class Cita {
 
     public void setEstado(Estado estado) {
         this.estado = estado;
+    }
+
+    public boolean isAtendida() {
+        return Boolean.TRUE.equals(atendida);
+    }
+
+    public void setAtendida(boolean atendida) {
+        this.atendida = atendida;
     }
 }

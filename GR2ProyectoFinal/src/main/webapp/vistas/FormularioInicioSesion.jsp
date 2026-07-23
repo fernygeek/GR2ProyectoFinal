@@ -68,12 +68,6 @@
             <h1 class="auth-title">Bienvenido</h1>
             <p class="auth-subtitle">Ingresa a tu cuenta de PetCare</p>
 
-            <div class="demo-credentials">
-                <p class="demo-credentials-title">Credenciales de prueba</p>
-                <p>Administrador — Cédula: <code>0000000001</code> · Clave: <code>admin123</code></p>
-                <p>Cliente — Cédula: <code>2000000001</code> · Clave: <code>cliente123</code></p>
-            </div>
-
             <c:if test="${not empty error}">
                 <div class="auth-error">${error}</div>
             </c:if>
@@ -87,7 +81,9 @@
                         <circle cx="8" cy="12" r="2"/>
                         <path d="M14 10h6M14 14h4"/>
                     </svg>
-                    <input type="text" id="cedula" name="cedula" placeholder="1712345678" required>
+                    <input type="text" id="cedula" name="cedula" placeholder="1712345678"
+                           minlength="10" maxlength="10" pattern="[0-9]{10}" inputmode="numeric"
+                           title="La cédula debe contener exactamente 10 dígitos" required>
                 </div>
 
                 <label for="clave" class="field-label">Contraseña</label>
@@ -103,6 +99,14 @@
                             <circle cx="12" cy="12" r="3"/>
                         </svg>
                     </button>
+                </div>
+
+                <div class="demo-credentials">
+                    <p class="demo-credentials-title">Credenciales de prueba</p>
+                    <p>Administrador — Cédula: <code>0000000001</code> · Clave: <code>admin123</code></p>
+                    <p>Cliente — Cédula: <code>2000000001</code> · Clave: <code>cliente123</code></p>
+                    <p>Recepcionista — Cédula: <code>3000000001</code> · Clave: <code>recep123</code></p>
+                    <p>Veterinario — Cédula: <code>1000000002</code> · Clave: <code>vet123</code></p>
                 </div>
 
                 <button type="submit" class="btn-gradient">Iniciar Sesión</button>

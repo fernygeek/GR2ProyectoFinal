@@ -8,14 +8,41 @@
     <title>Consultar cita — PetCare</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/petcare.css">
     <style>
-        .citas-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .consulta-card { width: min(1120px, calc(100% - 32px)); max-width: 1120px !important; }
+        .tabla-responsive { width: 100%; margin-top: 24px; overflow-x: auto; }
+        .citas-table { width: 100%; min-width: 900px; border-collapse: collapse; }
         .citas-table th, .citas-table td {
             text-align: left;
-            padding: 12px 14px;
+            padding: 14px 12px;
             border-bottom: 1px solid var(--color-border);
             font-size: 0.95rem;
+            vertical-align: middle;
         }
-        .citas-table th { color: var(--color-text-muted); font-weight: 600; }
+        .citas-table th { color: var(--color-text-muted); font-weight: 600; white-space: nowrap; }
+        .citas-table tbody tr:hover { background: #fcf8ff; }
+        .col-fecha, .col-hora, .col-estado, .col-acciones { white-space: nowrap; }
+        .col-acciones { width: 175px; }
+        .btn-accion {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: 8px 13px;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #9333ea, #ec4899);
+            color: #fff;
+            font-size: 0.86rem;
+            font-weight: 700;
+            line-height: 1.15;
+            text-align: center;
+            text-decoration: none;
+            transition: transform .15s ease, filter .15s ease;
+        }
+        .btn-accion:hover { filter: brightness(1.06); transform: translateY(-1px); }
+        .sin-accion { color: var(--color-text-muted); }
+        @media (max-width: 700px) {
+            .consulta-card { width: calc(100% - 20px); padding-left: 20px; padding-right: 20px; }
+        }
     </style>
 </head>
 <body>
@@ -44,7 +71,7 @@
 
     <!-- ===== Contenido ===== -->
     <main class="auth-page">
-        <div class="auth-card" style="max-width: 640px;">
+        <div class="auth-card consulta-card">
             <div class="auth-icon">
                 <svg viewBox="0 0 24 24" width="28" height="28" fill="white">
                     <circle cx="8" cy="7" r="1.6"/>
@@ -69,13 +96,16 @@
                         <circle cx="8" cy="12" r="2"/>
                         <path d="M14 10h6M14 14h4"/>
                     </svg>
-                    <input type="text" id="cedula" name="cedula" placeholder="1712345678" required>
+                    <input type="text" id="cedula" name="cedula" placeholder="1712345678"
+                           minlength="10" maxlength="10" pattern="[0-9]{10}" inputmode="numeric"
+                           title="La cédula debe contener exactamente 10 dígitos" required>
                 </div>
 
                 <button type="submit" class="btn-gradient">Buscar</button>
             </form>
 
             <c:if test="${not empty listaCitasAgendadas}">
+                <div class="tabla-responsive">
                 <table class="citas-table">
                     <thead>
                         <tr>
@@ -91,25 +121,42 @@
                     <tbody>
                         <c:forEach var="c" items="${listaCitasAgendadas}">
                             <tr>
-                                <td>${c.fecha}</td>
-                                <td>${c.hora}</td>
+                                <td class="col-fecha">${c.fecha}</td>
+                                <td class="col-hora">${c.hora}</td>
                                 <td>${c.mascota.nombre}</td>
                                 <td>${c.servicio.nombreServicio}</td>
                                 <td>${c.veterinario.nombre}</td>
-                                <td>${c.estado}</td>
-                                <td>
+                                <td class="col-estado">${c.estado}</td>
+                                <td class="col-acciones">
                                     <c:if test="${c.estado == 'PENDIENTE'}">
-                                        <a href="${pageContext.request.contextPath}/atenderCitas?accion=marcarAsistenciaDeCita&citaId=${c.id}">Marcar como asistida</a>
+                                        <c:if test="${esRecepcionista}">
+                                            <a class="btn-accion" href="${pageContext.request.contextPath}/consultarCita?accion=marcarAsistencia&amp;citaId=${c.id}">Marcar como asistida</a>
+                                        </c:if>
+                                        <c:if test="${esVeterinario}"><span class="sin-accion">Esperando asistencia</span></c:if>
                                     </c:if>
                                     <c:if test="${c.estado == 'ASISTIDA'}">
-                                        <a href="${pageContext.request.contextPath}/atenderCitas?accion=atenderLaCita&citaId=${c.id}">Atender</a>
-                                        <a href="${pageContext.request.contextPath}/registrarPago?accion=registrarPago&citaId=${c.id}">Registrar Pago</a>
+                                        <c:if test="${esRecepcionista && c.atendida}">
+                                            <a class="btn-accion" href="${pageContext.request.contextPath}/registrarPago?accion=registrarPago&amp;citaId=${c.id}">Registrar pago</a>
+                                        </c:if>
+                                        <c:if test="${esRecepcionista && !c.atendida}">
+                                            <span class="sin-accion">Esperando atención</span>
+                                        </c:if>
+                                        <c:if test="${esVeterinario && !c.atendida}">
+                                            <a class="btn-accion" href="${pageContext.request.contextPath}/atenderCitas?accion=atenderLaCita&amp;citaId=${c.id}">Atender</a>
+                                        </c:if>
+                                        <c:if test="${esVeterinario && c.atendida}">
+                                            <span class="sin-accion">Registre el pago en recepción</span>
+                                        </c:if>
+                                    </c:if>
+                                    <c:if test="${c.estado == 'COMPLETADA' || c.estado == 'CANCELADA'}">
+                                        <span class="sin-accion">—</span>
                                     </c:if>
                                 </td>
                             </tr>
                         </c:forEach>
                     </tbody>
                 </table>
+                </div>
             </c:if>
         </div>
     </main>

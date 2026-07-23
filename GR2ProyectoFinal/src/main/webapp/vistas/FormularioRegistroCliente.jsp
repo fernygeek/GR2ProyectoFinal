@@ -57,7 +57,9 @@
                         <circle cx="8" cy="12" r="2"/>
                         <path d="M14 10h6M14 14h4"/>
                     </svg>
-                    <input type="text" id="cedula" name="cedula" placeholder="1712345678" required>
+                    <input type="text" id="cedula" name="cedula" placeholder="1712345678"
+                           minlength="10" maxlength="10" pattern="[0-9]{10}" inputmode="numeric"
+                           title="La cédula debe contener exactamente 10 dígitos" required>
                 </div>
 
                 <label for="nombre" class="field-label">Nombre Completo</label>

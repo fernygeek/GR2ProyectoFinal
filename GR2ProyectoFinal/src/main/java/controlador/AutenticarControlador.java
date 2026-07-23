@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import modelo.entity.Administrador;
 import modelo.entity.Cliente;
 import modelo.entity.Usuario;
+import modelo.entity.Veterinario;
 import modelo.services.UsuarioService;
 
 @WebServlet({"/autenticarse", "/login"})
@@ -84,6 +85,8 @@ public class AutenticarControlador extends HttpServlet {
             return "/citas";
         } else if (usuario instanceof Administrador) {
             return "/usuarios";
+        } else if (usuario instanceof Veterinario) {
+            return "/consultarCita";
         }
         return "/consultarCita";
     }

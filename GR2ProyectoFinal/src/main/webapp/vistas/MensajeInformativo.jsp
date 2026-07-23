@@ -51,7 +51,18 @@
                 <a href="${enlaceRegistrarPago}" class="btn-gradient" style="display: block; text-align: center; margin-bottom: 12px;">Registrar Pago</a>
             </c:if>
 
-            <a href="${pageContext.request.contextPath}/citas" class="btn-gradient" style="display: block; text-align: center;">Volver a Mis Citas</a>
+            <c:if test="${not empty enlaceContinuar}">
+                <a href="${enlaceContinuar}" class="btn-gradient" style="display: block; text-align: center;">
+                    <c:choose>
+                        <c:when test="${not empty textoEnlaceContinuar}">${textoEnlaceContinuar}</c:when>
+                        <c:otherwise>Volver a citas asistidas</c:otherwise>
+                    </c:choose>
+                </a>
+            </c:if>
+
+            <c:if test="${empty enlaceContinuar}">
+                <a href="${pageContext.request.contextPath}/citas" class="btn-gradient" style="display: block; text-align: center;">Volver a Mis Citas</a>
+            </c:if>
         </div>
     </main>
 
