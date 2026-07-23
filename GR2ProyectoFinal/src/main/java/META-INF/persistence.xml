@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<persistence version="3.1"
+    xmlns="https://jakarta.ee/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        https://jakarta.ee/xml/ns/persistence
+        https://jakarta.ee/xml/ns/persistence/persistence_3_1.xsd">
+
+    <persistence-unit name="persistencia"
+                      transaction-type="RESOURCE_LOCAL">
+
+        <provider>
+            org.eclipse.persistence.jpa.PersistenceProvider
+        </provider>
+
+        <class>modelo.entities.Usuario</class>
+        <class>modelo.entities.Cliente</class>
+        <class>modelo.entities.Veterinario</class>
+        <class>modelo.entities.Recepcionista</class>
+        <class>modelo.entities.Administrador</class>
+        <class>modelo.entities.Mascota</class>
+        <class>modelo.entities.Servicio</class>
+        <class>modelo.entities.Cita</class>
+        <class>modelo.entities.HistoriaClinica</class>
+        <class>modelo.entities.Atencion</class>
+        <class>modelo.entities.Pago</class>
+
+        <properties>
+            <property name="jakarta.persistence.jdbc.url"
+                      value="jdbc:mysql://localhost:3306/demosav"/>
+
+            <property name="jakarta.persistence.jdbc.user"
+                      value="root"/>
+
+            <property name="jakarta.persistence.jdbc.password"
+                      value=""/>
+
+            <property name="jakarta.persistence.jdbc.driver"
+                      value="com.mysql.cj.jdbc.Driver"/>
+
+            <property name="eclipselink.ddl-generation"
+                      value="create-tables"/>
+        </properties>
+
+    </persistence-unit>
+</persistence>
