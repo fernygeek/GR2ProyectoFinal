@@ -7,6 +7,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reagendar cita — PetCare</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/petcare.css">
+    <style>
+        .reagendar-card { position: relative; }
+        .btn-volver {
+            position: absolute;
+            top: 24px;
+            left: 28px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px;
+            border-radius: 9px;
+            color: var(--color-text-muted);
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .btn-volver:hover { color: #9333ea; background: var(--color-input-bg); }
+        .btn-volver svg { width: 20px; height: 20px; }
+        @media (max-width: 600px) {
+            .btn-volver { top: 16px; left: 16px; }
+            .btn-volver span { display: none; }
+        }
+    </style>
 </head>
 <body>
 
@@ -34,7 +56,13 @@
 
     <!-- ===== Contenido ===== -->
     <main class="auth-page">
-        <div class="auth-card" style="max-width: 760px;">
+        <div class="auth-card reagendar-card" style="max-width: 760px;">
+            <a href="${pageContext.request.contextPath}/citas" class="btn-volver" aria-label="Volver a mis citas">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                <span>Volver</span>
+            </a>
             <h1 class="auth-title">Reagendar cita</h1>
             <p class="auth-subtitle">Selecciona un horario disponible del veterinario</p>
 
@@ -111,7 +139,7 @@
 
             <div class="footer-col">
                 <h4>Contacto</h4>
-                <p>📞 +54 11 1234-5678</p>
+                <p>📞 +593123456</p>
                 <p>✉️ info@petcare.com</p>
                 <p>📍 Av. Libertador 1234, CABA</p>
             </div>

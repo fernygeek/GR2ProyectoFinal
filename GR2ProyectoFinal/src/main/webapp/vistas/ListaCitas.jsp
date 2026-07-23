@@ -86,11 +86,11 @@
                             <td>${c.veterinario.nombre}</td>
                             <td>${c.estado}</td>
                             <td class="citas-actions">
-                                <c:if test="${c.estado != 'COMPLETADA' && c.estado != 'CANCELADA'}">
+                                <c:if test="${c.estado == 'PENDIENTE'}">
                                     <a class="btn-small reagendar" href="${pageContext.request.contextPath}/citas?accion=reagendar&amp;citaId=${c.id}">Reagendar</a>
                                     <a class="btn-small cancelar" href="${pageContext.request.contextPath}/citas?accion=solicitarCancelacion&amp;citaId=${c.id}">Cancelar</a>
                                 </c:if>
-                                <c:if test="${c.estado == 'COMPLETADA' || c.estado == 'CANCELADA'}">
+                                <c:if test="${c.estado != 'PENDIENTE'}">
                                     <span style="color: var(--color-text-muted);">—</span>
                                 </c:if>
                             </td>
@@ -121,7 +121,7 @@
 
             <div class="footer-col">
                 <h4>Contacto</h4>
-                <p>📞 +54 11 1234-5678</p>
+                <p>📞 +593123456</p>
                 <p>✉️ info@petcare.com</p>
                 <p>📍 Av. Libertador 1234, CABA</p>
             </div>

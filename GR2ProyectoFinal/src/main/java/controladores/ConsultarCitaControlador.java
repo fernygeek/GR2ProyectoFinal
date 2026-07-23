@@ -1,4 +1,4 @@
-package controlador;
+package controladores;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,6 +41,7 @@ public class ConsultarCitaControlador extends HttpServlet {
                 return;
             }
             citaService.cambiarCitaAAsistida(cita);
+            request.getSession().setAttribute("mensajeAsistencia", "Cita marcada como asistida correctamente");
             response.sendRedirect(request.getContextPath() + "/consultarCita");
         } catch (NumberFormatException ex) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Identificador de cita inválido");
@@ -59,6 +60,11 @@ public class ConsultarCitaControlador extends HttpServlet {
 
     private void mostrarConsulta(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         agregarDatosRol(request);
+        Object mensajeAsistencia = request.getSession().getAttribute("mensajeAsistencia");
+        if (mensajeAsistencia != null) {
+            request.setAttribute("mensajeAsistencia", mensajeAsistencia);
+            request.getSession().removeAttribute("mensajeAsistencia");
+        }
         request.getRequestDispatcher("/vistas/FormularioConsultarCita.jsp").forward(request, response);
     }
 

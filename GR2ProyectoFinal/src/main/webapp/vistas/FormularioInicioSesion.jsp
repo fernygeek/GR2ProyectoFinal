@@ -106,7 +106,7 @@
                     <p>Administrador — Cédula: <code>0000000001</code> · Clave: <code>admin123</code></p>
                     <p>Cliente — Cédula: <code>2000000001</code> · Clave: <code>cliente123</code></p>
                     <p>Recepcionista — Cédula: <code>3000000001</code> · Clave: <code>recep123</code></p>
-                    <p>Veterinario — Cédula: <code>1000000002</code> · Clave: <code>vet123</code></p>
+                    <p>Veterinario (Dra. Ana Torres) — Cédula: <code>1000000002</code> · Clave: <code>vet123</code></p>
                 </div>
 
                 <button type="submit" class="btn-gradient">Iniciar Sesión</button>
@@ -139,18 +139,10 @@
 
             <div class="footer-col">
                 <h4>Contacto</h4>
-                <p>📞 +54 11 1234-5678</p>
+                <p>📞 +593123456</p>
                 <p>✉️ info@petcare.com</p>
             </div>
 
-            <div class="footer-col">
-                <h4>Síguenos</h4>
-                <div class="social-icons">
-                    <a href="#" aria-label="Facebook">f</a>
-                    <a href="#" aria-label="Instagram">ig</a>
-                    <a href="#" aria-label="Twitter">tw</a>
-                </div>
-            </div>
         </div>
     </footer>
 

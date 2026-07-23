@@ -126,19 +126,11 @@
 
             <div class="footer-col">
                 <h4>Contacto</h4>
-                <p>📞 +54 11 1234-5678</p>
+                <p>📞 +593123456</p>
                 <p>✉️ info@petcare.com</p>
                 <p>📍 Av. Libertador 1234, CABA</p>
             </div>
 
-            <div class="footer-col">
-                <h4>Síguenos</h4>
-                <div class="social-icons">
-                    <a href="#" aria-label="Facebook">f</a>
-                    <a href="#" aria-label="Instagram">ig</a>
-                    <a href="#" aria-label="Twitter">tw</a>
-                </div>
-            </div>
         </div>
         <p class="footer-copy">© 2026 PetCare. Todos los derechos reservados.</p>
     </footer>

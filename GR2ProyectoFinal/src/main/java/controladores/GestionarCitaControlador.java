@@ -1,4 +1,4 @@
-package controlador;
+package controladores;
 
 import java.io.IOException;
 import java.time.DayOfWeek;
@@ -65,6 +65,12 @@ public class GestionarCitaControlador extends HttpServlet {
             seleccionarServicio(request, response, request.getParameter("servicio"));
         } else if ("seleccionarVeterinario".equals(accion)) {
             seleccionarVeterinario(request, response, request.getParameter("veterinario"));
+        } else if ("volverAMascotas".equals(accion)) {
+            verificarMascotasRegistradas(request, response);
+        } else if ("volverAServicios".equals(accion)) {
+            seleccionarMascota(request, response, request.getParameter("mascota"));
+        } else if ("volverAVeterinarios".equals(accion)) {
+            seleccionarServicio(request, response, request.getParameter("servicio"));
         } else if ("verSemanaAgendamiento".equals(accion)) {
             verSemanaAgendamiento(request, response);
         } else if ("registrarCita".equals(accion)) {
@@ -350,7 +356,6 @@ public class GestionarCitaControlador extends HttpServlet {
         return usuario instanceof Cliente
                 && cita != null
                 && cita.getCliente().getCedula().equals(((Cliente) usuario).getCedula())
-                && cita.getEstado() != Estado.COMPLETADA
-                && cita.getEstado() != Estado.CANCELADA;
+                && cita.getEstado() == Estado.PENDIENTE;
     }
 }

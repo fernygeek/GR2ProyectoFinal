@@ -40,6 +40,16 @@
         }
         .btn-accion:hover { filter: brightness(1.06); transform: translateY(-1px); }
         .sin-accion { color: var(--color-text-muted); }
+        .mensaje-exito {
+            margin-bottom: 18px;
+            padding: 12px 14px;
+            border: 1px solid #86efac;
+            border-radius: 10px;
+            background: #f0fdf4;
+            color: #166534;
+            font-weight: 600;
+            text-align: center;
+        }
         @media (max-width: 700px) {
             .consulta-card { width: calc(100% - 20px); padding-left: 20px; padding-right: 20px; }
         }
@@ -88,6 +98,10 @@
                 <div class="auth-error">${mensajeNoExistenCitasRegistradas}</div>
             </c:if>
 
+            <c:if test="${not empty mensajeAsistencia}">
+                <div class="mensaje-exito" role="status">${mensajeAsistencia}</div>
+            </c:if>
+
             <form action="${pageContext.request.contextPath}/consultarCita" method="post" class="auth-form">
                 <label for="cedula" class="field-label">Cédula</label>
                 <div class="field-with-icon">
@@ -132,7 +146,7 @@
                                         <c:if test="${esRecepcionista}">
                                             <a class="btn-accion" href="${pageContext.request.contextPath}/consultarCita?accion=marcarAsistencia&amp;citaId=${c.id}">Marcar como asistida</a>
                                         </c:if>
-                                        <c:if test="${esVeterinario}"><span class="sin-accion">Esperando asistencia</span></c:if>
+                                        <c:if test="${esVeterinario}"><span class="sin-accion">Pendiente de asistencia en recepción</span></c:if>
                                     </c:if>
                                     <c:if test="${c.estado == 'ASISTIDA'}">
                                         <c:if test="${esRecepcionista && c.atendida}">
@@ -181,7 +195,7 @@
 
             <div class="footer-col">
                 <h4>Contacto</h4>
-                <p>📞 +54 11 1234-5678</p>
+                <p>📞 +593123456</p>
                 <p>✉️ info@petcare.com</p>
                 <p>📍 Av. Libertador 1234, CABA</p>
             </div>

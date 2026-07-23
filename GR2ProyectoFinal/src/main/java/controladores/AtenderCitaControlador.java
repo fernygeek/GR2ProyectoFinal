@@ -1,4 +1,4 @@
-package controlador;
+package controladores;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -34,6 +34,8 @@ public class AtenderCitaControlador extends HttpServlet {
         String accion = request.getParameter("accion");
         if ("atenderLaCita".equals(accion)) {
             atenderLaCita(request, response);
+        } else if ("volverAtencion".equals(accion)) {
+            volverAtencion(request, response);
         } else {
             listarCitasAsistidas(request, response);
         }
@@ -99,6 +101,7 @@ public class AtenderCitaControlador extends HttpServlet {
             List<Atencion> listaAtenciones = atencionService.obtenerAtenciones(historiaClinica);
             mostrarHistoriaClinica(request, response, listaAtenciones);
         } else {
+            session.removeAttribute("atenderHistoriaClinica");
             request.setAttribute("accionConfirmar", "crearHistoriaClinica");
             mostrarMensajeConfirmacion(request, response, "¿Desea crear la historia clínica de " + mascota.getNombre() + "?");
         }
@@ -107,6 +110,14 @@ public class AtenderCitaControlador extends HttpServlet {
     private Veterinario obtenerVeterinarioAutenticado(HttpServletRequest request) {
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
         return usuario instanceof Veterinario ? (Veterinario) usuario : null;
+    }
+
+    private void volverAtencion(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getSession().getAttribute("atenderHistoriaClinica") instanceof HistoriaClinica) {
+            abrirHistoriaClinica(request, response);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/consultarCita");
+        }
     }
 
     private void mostrarMensajeConfirmacion(HttpServletRequest request, HttpServletResponse response, String mensaje) throws ServletException, IOException {

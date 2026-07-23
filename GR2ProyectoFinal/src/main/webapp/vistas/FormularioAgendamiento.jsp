@@ -21,6 +21,28 @@
             width: 100%;
         }
         .opcion-btn:hover { background: var(--gradient-primary); color: #fff; border-color: transparent; }
+        .agendamiento-card { position: relative; }
+        .volver-form { position: absolute; top: 24px; left: 28px; margin: 0; }
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border: 0;
+            background: transparent;
+            color: var(--color-text-muted);
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 8px;
+            border-radius: 9px;
+        }
+        .btn-volver:hover { color: #9333ea; background: var(--color-input-bg); }
+        .btn-volver svg { width: 20px; height: 20px; }
+        @media (max-width: 600px) {
+            .volver-form { top: 16px; left: 16px; }
+            .btn-volver span { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -49,7 +71,45 @@
 
     <!-- ===== Contenido ===== -->
     <main class="auth-page">
-        <div class="auth-card" style="max-width: ${paso == 'horario' ? '760px' : '640px'};">
+        <div class="auth-card agendamiento-card" style="max-width: ${paso == 'horario' ? '760px' : '640px'};">
+            <c:choose>
+                <c:when test="${paso == 'mascota'}">
+                    <a href="${pageContext.request.contextPath}/citas" class="volver-form btn-volver" aria-label="Volver a mis citas">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        <span>Volver</span>
+                    </a>
+                </c:when>
+                <c:when test="${paso == 'servicio'}">
+                    <form action="${pageContext.request.contextPath}/citas" method="post" class="volver-form">
+                        <input type="hidden" name="accion" value="volverAMascotas">
+                        <button type="submit" class="btn-volver" aria-label="Volver a seleccionar mascota">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                            <span>Volver</span>
+                        </button>
+                    </form>
+                </c:when>
+                <c:when test="${paso == 'veterinario'}">
+                    <form action="${pageContext.request.contextPath}/citas" method="post" class="volver-form">
+                        <input type="hidden" name="accion" value="volverAServicios">
+                        <input type="hidden" name="mascota" value="${mascota}">
+                        <button type="submit" class="btn-volver" aria-label="Volver a seleccionar servicio">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                            <span>Volver</span>
+                        </button>
+                    </form>
+                </c:when>
+                <c:when test="${paso == 'horario'}">
+                    <form action="${pageContext.request.contextPath}/citas" method="post" class="volver-form">
+                        <input type="hidden" name="accion" value="volverAVeterinarios">
+                        <input type="hidden" name="mascota" value="${mascota}">
+                        <input type="hidden" name="servicio" value="${servicio}">
+                        <button type="submit" class="btn-volver" aria-label="Volver a seleccionar veterinario">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                            <span>Volver</span>
+                        </button>
+                    </form>
+                </c:when>
+            </c:choose>
             <h1 class="auth-title">Agendar cita</h1>
 
             <c:if test="${paso == 'mascota'}">
@@ -178,7 +238,7 @@
 
             <div class="footer-col">
                 <h4>Contacto</h4>
-                <p>📞 +54 11 1234-5678</p>
+                <p>📞 +593123456</p>
                 <p>✉️ info@petcare.com</p>
                 <p>📍 Av. Libertador 1234, CABA</p>
             </div>
